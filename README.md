@@ -1,9 +1,18 @@
 # if-experiments
+
+Small interactive experiments for ignitionfoundry.com/experiments. One shipped per week by Cursor Cloud Agents.
+
+## Experiments
+
+- [Webhook payload builder](experiments/webhook-payload-builder/index.html). Edit a JSON body and copy a curl command. Nothing is sent.
 Small interactive experiments for ignitionfoundry.com/experiments — one shipped per week by Cursor Cloud Agents.
 
 ## Experiments
 
 - [Prompt Pack Builder](experiments/prompt-pack/): pick a job, get a starter pack (one system prompt and five task prompts). Copy one, or download the pack as markdown. Static page, runs in the browser.
+## Products
+
+- [Job Card](products/job-card/): a one-page brief you fill in before you hand a job to an AI agent. Suggested price $15. Not for sale until a payment link is added.
 ## $5 Flip Challenge
 
 `flip/index.html` is the public pot tracker for ignitionfoundry.com/flip. The page fetches `flips.json` from the same directory as `pot.js`. Static files only. Serve the `flip` directory at `/flip/`.
