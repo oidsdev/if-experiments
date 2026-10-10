@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Results</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <noscript>
+      <p class="status">JavaScript is required to read results.json.</p>
+    </noscript>
+    <header class="head">
+      <div>
+        <h1 id="title">Results</h1>
+        <p id="subtitle" class="sub" hidden></p>
+        <p id="updated" class="meta" hidden></p>
+        <p id="compare" class="meta" hidden></p>
+        <p id="source" class="meta" hidden></p>
+      </div>
+      <label class="file">Load JSON file
+        <input id="file" type="file" accept="application/json,.json">
+      </label>
+    </header>
+    <div id="status" class="status" role="status" hidden></div>
+    <section id="metrics" class="metrics" aria-label="Metrics"></section>
+    <div id="charts" class="charts"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

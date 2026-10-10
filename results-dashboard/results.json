@@ -1,0 +1,38 @@
+{
+  "title": "Experiment results",
+  "subtitle": "Sample week. Replace this file with your own results.",
+  "updated": "2026-10-11",
+  "compare": "Change versus the prior week.",
+  "metrics": [
+    { "label": "Sessions", "value": 4820, "delta": 612 },
+    { "label": "Completion", "value": 37, "unit": "%", "delta": -2 },
+    { "label": "Median time", "value": 186, "unit": "sec", "delta": 12 },
+    { "label": "Return visits", "value": 640, "delta": 48 }
+  ],
+  "charts": [
+    {
+      "title": "Sessions by experiment",
+      "type": "bar",
+      "points": [
+        { "label": "Station 9", "value": 2104 },
+        { "label": "Herbarium", "value": 986 },
+        { "label": "Neighbours", "value": 742 },
+        { "label": "Parlour", "value": 631 },
+        { "label": "Almanac", "value": 357 }
+      ]
+    },
+    {
+      "title": "Sessions by day",
+      "type": "line",
+      "points": [
+        { "label": "5 Oct", "value": 610 },
+        { "label": "6 Oct", "value": 644 },
+        { "label": "7 Oct", "value": 802 },
+        { "label": "8 Oct", "value": 711 },
+        { "label": "9 Oct", "value": 688 },
+        { "label": "10 Oct", "value": 790 },
+        { "label": "11 Oct", "value": 575 }
+      ]
+    }
+  ]
+}
