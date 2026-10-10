@@ -142,8 +142,7 @@ class ValidateExperimentTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             for name, results in cases.items():
-                folder_name = results["id"] if name != "slug" else "Bad_Slug"
-                folder = write_experiment(root, results, name=folder_name)
+                folder = write_experiment(root / name, results, name=results["id"])
                 text = "\n".join(v.validate_experiment(folder))
                 self.assertIn(expectations[name], text, name)
 
