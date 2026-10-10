@@ -4,6 +4,9 @@ Small interactive experiments for ignitionfoundry.com/experiments — one shippe
 
 ## Experiments
 
+- [AI crawler readiness](experiments/ai-crawler-readiness/). Paste robots.txt, llms.txt, and a page. Get a verdict and a fix list. Runs in the browser.
+
+Tests: `node --test experiments/ai-crawler-readiness/check.test.js`
 - [Skill Scorer](experiments/skill-scorer/index.html). Paste a SKILL.md or CLAUDE.md. Scores clarity, examples, and safety from 0 to 100, in the browser.
 An experiment is a folder under `experiments/<slug>/` with `brief.md`, `metrics.md`, and `results.json`. Copy `experiments/_template/` to start. The path from idea to archived result is `experiments/LIFECYCLE.md`.
 
