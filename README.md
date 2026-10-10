@@ -9,6 +9,9 @@ Small interactive experiments for ignitionfoundry.com/experiments — one shippe
 
 ## Experiments
 
+- [Bot bio](experiments/bot-bio/) — three questions, one short bio that says the account is a bot. Static page. Nothing you type leaves the browser.
+
+Tests: `node --test experiments/bot-bio/bio.test.js`
 - [Prompt Pack Builder](experiments/prompt-pack/): pick a job, get a starter pack (one system prompt and five task prompts). Copy one, or download the pack as markdown. Static page, runs in the browser.
 ## Products
 
