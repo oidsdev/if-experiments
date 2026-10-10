@@ -313,14 +313,14 @@
     } else if (blockedReq.length) {
       status = 'fail';
       var blockedBit = listNames(blockedReq.map(function (bot) { return bot.name; })) + ' ' + (blockedReq.length > 1 ? 'are' : 'is') + ' blocked.';
-      var allowedBit = listNames(allowedReq.map(function (bot) { return bot.name; })) + ' can fetch /.';
+      var allowedBit = listNames(allowedReq.map(function (bot) { return bot.name; })) + ' can fetch the homepage.';
       summary = blockedBit + ' ' + allowedBit;
     } else if (blockedAns.length) {
       status = 'partial';
-      summary = 'GPTBot, ClaudeBot, and PerplexityBot can fetch /. ' + listNames(blockedAns.map(function (bot) { return bot.name; })) + ' ' + (blockedAns.length > 1 ? 'are' : 'is') + ' blocked.';
+      summary = 'GPTBot, ClaudeBot, and PerplexityBot can fetch the homepage. ' + listNames(blockedAns.map(function (bot) { return bot.name; })) + ' ' + (blockedAns.length > 1 ? 'are' : 'is') + ' blocked.';
     } else {
       status = 'pass';
-      summary = 'GPTBot, ClaudeBot, and PerplexityBot can fetch /.';
+      summary = 'GPTBot, ClaudeBot, and PerplexityBot can fetch the homepage.';
     }
 
     var reqFixes = fixesForBlocked(blockedReq);

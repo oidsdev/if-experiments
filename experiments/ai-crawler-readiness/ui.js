@@ -28,7 +28,7 @@
         check.bots.forEach(function (bot) {
           var item = document.createElement('li');
           item.textContent = bot.allowed
-            ? bot.name + ' can fetch /'
+            ? bot.name + ' can fetch the homepage'
             : bot.name + ' is blocked (' + bot.via + ')';
           list.append(item);
         });
