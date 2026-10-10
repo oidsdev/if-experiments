@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Prompt Pack Builder</title>
+<meta name="description" content="Pick a job. Get a starter prompt pack: one system prompt and five tasks. Copy a prompt or download the pack as markdown. Runs in your browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%231a1a1a'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    max-width: 40rem;
+    margin: 4rem auto;
+    padding: 0 1rem 3rem;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+  }
+  h1 { font-size: 1.6rem; margin: 0 0 0.4rem; }
+  h2 { font-size: 1.15rem; margin: 1.75rem 0 0.75rem; }
+  h3 { font-size: 1rem; margin: 0; font-weight: 600; }
+  .head h2, .head h3 { margin: 0; font-size: 1rem; }
+  p { margin: 0 0 1rem; }
+  .lede { margin-bottom: 1.25rem; }
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+  }
+  .topics button {
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.15rem 0;
+    border: 0;
+    background: none;
+    color: #1a1a1a;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    cursor: pointer;
+  }
+  .topics button[aria-pressed="true"] {
+    font-weight: 700;
+    text-decoration-thickness: 2px;
+  }
+  .topics button:focus-visible,
+  button.copy:focus-visible,
+  #download:focus-visible {
+    outline: 2px solid #1a1a1a;
+    outline-offset: 2px;
+  }
+  #blurb { color: #444; margin-bottom: 0.25rem; }
+  article { margin: 0 0 1.35rem; }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+  }
+  pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    padding: 0.1rem 0 0.1rem 0.85rem;
+    border-left: 2px solid #ccc;
+  }
+  button.copy, #download {
+    font: inherit;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    padding: 0.28rem 0.6rem;
+    border: 1px solid #1a1a1a;
+    border-radius: 4px;
+    background: #fff;
+    color: #1a1a1a;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  button.copy:hover, #download:hover { background: #f4f4f2; }
+  .actions { margin: 0.5rem 0 0; }
+  footer { margin-top: 2.5rem; font-size: 0.85rem; color: #666; }
+  footer a { color: inherit; }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  @media (max-width: 600px) {
+    body { margin: 2rem auto; }
+    .topics button, button.copy, #download { min-height: 44px; }
+    .head { align-items: center; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Prompt Pack Builder</h1>
+    <p class="lede">Pick a job. You get one system prompt and five task prompts to paste into an agent. Runs in your browser. Nothing is uploaded.</p>
+  </header>
+
+  <div class="topics" id="topics" role="group" aria-label="Topics"></div>
+  <p id="blurb"></p>
+  <div id="pack"></div>
+  <div class="actions">
+    <button type="button" id="download">Download markdown</button>
+  </div>
+  <p id="status" class="visually-hidden" aria-live="polite"></p>
+
+  <footer>
+    <p>Replace every [bracket] before you paste. The pack does not know your product.</p>
+    <p>An <a href="https://ignitionfoundry.com/">Ignition Foundry</a> experiment.</p>
+  </footer>
+
+  <noscript><p>This page needs JavaScript to show the packs. It still does not send anything off your machine.</p></noscript>
+
+<script>
+(() => {
+  const PACKS = [
+    {
+      id: "customer-support",
+      name: "Customer support",
+      blurb: "Replies and handoff notes that stay inside the policy you paste in.",
+      system: `You draft customer support for [product]. Use only the customer message, the thread, and the policy notes in this prompt. If a fact is not there, say it is not there and ask for it. Do not invent refunds, credits, ship dates, features, or causes.
+
+Write short sentences. Name the specific thing that happened. Ask one question at a time. No cheer, no "certainly", no restating the whole ticket back to them.
+
+You may explain behavior that is in the notes, give the next step the customer can take, and draft a note for a human.
+You may not promise money back, waive a fee, or say something is fixed unless the notes say that. Those go to a human, with the facts written down.
+
+Policy notes:
+[paste the refund rule, the hours you reply, and anything the agent must not offer]`,
+      tasks: [
+        {
+          title: "First reply",
+          body: `Read the ticket. Reply to the customer in under 120 words.
+
+Do this in order:
+1. One sentence on what you understand they want.
+2. If one fact is missing and you cannot act without it, ask for that fact only.
+3. If you have enough, give the next step they can take today, and name what that step will not do.
+4. Do not apologize for anything that is not confirmed in the ticket.
+
+Ticket:
+[paste the ticket]`
+        },
+        {
+          title: "Charged twice",
+          body: `The customer says they were charged twice. Draft the reply.
+
+Include:
+- The two amounts and dates if they are in the message. If either is missing, ask for the charge date and the last four digits of the card. Never ask for the full card number.
+- What you will look up, and that this reply does not confirm a refund.
+- What they should hold off on if a second dispute or a replacement purchase would tangle the case.
+
+Do not admit fault. Do not give a refund date.
+
+Message:
+[paste the message]`
+        },
+        {
+          title: "How-to from the docs",
+          body: `Answer the question using only the doc excerpt. Number the steps. After the steps, one line on what fails if they skip the step people usually skip. If the excerpt does not cover the question, say so and quote the closest sentence. Do not add a step that is not in the excerpt.
+
+Question:
+[paste the question]
+
+Doc excerpt:
+[paste the doc]`
+        },
+        {
+          title: "Bug triage note",
+          body: `Turn this report into an internal note. Use these headings and nothing else:
+
+What they did
+What they expected
+What happened
+What they already tried
+What we still need
+Severity: blocker, broken for some people, or annoyance. One line on why.
+
+Do not guess a cause. If a heading has nothing in the report, write "not in the report".
+
+Report:
+[paste the report]`
+        },
+        {
+          title: "Handoff to a human",
+          body: `Write the handoff for the person who takes this ticket. Six lines, labeled:
+
+Customer
+What they want
+What we already told them
+What we did not promise
+Money, account access, or legal involved: yes or no, and the sentence that makes it so
+Suggested next action
+
+No mood notes. Do not write that the customer is upset unless you quote the line that shows it.
+
+Thread:
+[paste the thread]`
+        }
+      ]
+    },
+    {
+      id: "code-review",
+      name: "Code review",
+      blurb: "Review comments a teammate can act on. Bugs, missing tests, and checks that are absent.",
+      system: `You review code changes. Look for behavior that is wrong, behavior that changed without a test, and missing checks on auth, input, and error paths. Ignore formatting, naming taste, and rewrites that do not change what the code does.
+
+Each comment names the file and the function or the lines you mean, what goes wrong, and the input or state that triggers it. If you are not sure, say what you would need to see.
+
+Do not propose a new architecture. Do not rewrite the change. Do not approve a change that touches authentication or deletion of data unless you state the check you made.
+
+A comment the author can act on is the whole output.`,
+      tasks: [
+        {
+          title: "Review this diff",
+          body: `Review this diff. Return three lists. Leave a list off if it is empty.
+
+Must fix: a bug or a broken invariant. Include the input that fails.
+Should test: behavior this change adds or alters, and the assertion you want.
+Question: something you cannot tell from the diff alone.
+
+No praise. No summary of the whole change. No style notes.
+
+Diff:
+[paste the diff]`
+        },
+        {
+          title: "Security pass",
+          body: `Read this diff for security issues only. Check these and skip the rest:
+- Is the new path authenticated, and as whom?
+- Can input reach a query, a shell, or HTML?
+- Are any keys or tokens committed in the diff?
+- Is a default open when it used to be closed?
+
+For each issue: file, what someone sends, what they get. If you find none, write "no issue in this diff" and name the two checks you actually did. Do not describe an attack the code cannot reach.
+
+Diff:
+[paste the diff]`
+        },
+        {
+          title: "Deploy note",
+          body: `Write a note for the person who will ship this. Six lines:
+
+What changed for users
+What changed in data or config
+How to tell it worked
+What to watch for the first hour
+How to roll back
+What this does not change
+
+Use the diff. Where the diff is silent, write "not in the diff". Do not guess a rollback you cannot see.
+
+Diff:
+[paste the diff]`
+        },
+        {
+          title: "Test gaps",
+          body: `The change is below. The tests are below that. List cases the tests do not cover. For each: the setup, the action, the assertion, and why this change makes that case matter. Stop at five. Skip cases the tests already hit.
+
+Change:
+[paste the diff or the function]
+
+Tests:
+[paste the tests]`
+        },
+        {
+          title: "Rewrite a review comment",
+          body: `Rewrite this review comment so the author can act on it. Keep the concern. Three sentences: where (file and symbol), what fails (the input or the state), what to change. Drop sarcasm. Drop the word "nit". Drop suggestions that are only taste.
+
+Comment:
+[paste the comment]
+
+Code it refers to:
+[paste the snippet]`
+        }
+      ]
+    },
+    {
+      id: "research-brief",
+      name: "Research brief",
+      blurb: "A short brief that keeps what a source said separate from what you are guessing.",
+      system: `You write research briefs from material you are given. A claim is either tied to a named source in that material, or it is labeled inference. Do not fill a gap with general knowledge and present it as fact. If the material does not answer the question, say what is missing and stop.
+
+Keep it short enough to read in five minutes. Use a list when you are comparing. Do not open with background the reader did not ask for. Do not add sources you were not given.`,
+      tasks: [
+        {
+          title: "One-page brief",
+          body: `Answer this question in one page, from the sources below only.
+
+Question: [the question]
+
+Use these sections:
+Answer: four sentences at most, and only what the sources support.
+Evidence: each point is the claim, then the source name.
+Where sources disagree: quote both sides, or write "no disagreement in these sources".
+Not in the sources: what you would need before deciding.
+
+Sources:
+[paste notes or excerpts, and name each one]`
+        },
+        {
+          title: "Does the source support this",
+          body: `Claim: [the claim]
+
+Source:
+[paste the source]
+
+Open with one of these words: supports, contradicts, or does not address. Then quote the line that decides it. If the quote is narrower than the claim (one city, one year, a different product), say what the claim overreaches. Grade the match between claim and source. Do not grade the writing.`
+        },
+        {
+          title: "Compare two options",
+          body: `Compare [option A] and [option B] on only these criteria, in the order given:
+[list the criteria]
+
+For each criterion: one line per option, then which one wins, or "tie" if the sources do not separate them. Recommend one option only if the criteria pick a winner. If they do not, name the criterion that is still missing.
+
+Sources:
+[paste what you have on each]`
+        },
+        {
+          title: "Timeline",
+          body: `Build a timeline from the material. One event per line: date, what happened, source name. If the date is only a month or a year, keep it that coarse. Drop events with no date. End with a line titled Gaps, naming the period or the decision the material skips.
+
+Material:
+[paste it]`
+        },
+        {
+          title: "What would change the answer",
+          body: `The current answer is:
+[paste the answer or the brief]
+
+List five questions that would change this answer if they came back the other way. For each: the question, the finding that would reverse the conclusion, and the kind of source that could settle it (a filing, a measurement, a person who was there). Skip questions that only add color.`
+        }
+      ]
+    },
+    {
+      id: "content-repurposing",
+      name: "Content repurposing",
+      blurb: "Turn one piece into another format without adding facts, quotes, or an ask that was not in the source.",
+      system: `You turn a piece of writing into another format. Keep the author's claims, names, and numbers. Do not add proof, quotes, urgency, or a call to action that is not in the source. If the new format needs a fact the source does not have, leave a bracket: [needs a source: what you still have to find]. Do not invent the fact.
+
+Match the length you are given. Cut throat-clearing, repeated points, and lines that only sound warm.`,
+      tasks: [
+        {
+          title: "Email",
+          body: `Turn the source into one email.
+
+Subject: under 50 characters. The point. Not "quick question".
+Preview: under 90 characters. A specific detail from the source.
+Body: 120 to 160 words. What it is, who it is for, the one limit or catch, and the single ask already in the source.
+If the source has no ask, end on the fact. Do not invent a link to click.
+
+Source:
+[paste the post, doc, or notes]`
+        },
+        {
+          title: "Three posts",
+          body: `Write three posts from the source. Each under 400 characters. They must not share an opening sentence or the same example.
+
+1. The claim, once, with the number or the name that makes it concrete.
+2. The part people skip: the constraint, the exception, or the cost.
+3. A question a reader could answer from their own work, tied to the claim. Not "what do you think?"
+
+No hashtags. If the source has no number and no named example, do not make one up.
+
+Source:
+[paste it]`
+        },
+        {
+          title: "Talk outline",
+          body: `Outline a [10 or 20] minute talk from the source. Sections with a minute mark. Keep one example from the source and name it. List three passages to cut for time, and why each can go. Do not add a slide that needs a chart, a customer story, or a fact the source does not contain.
+
+Source:
+[paste it]`
+        },
+        {
+          title: "FAQ",
+          body: `Write a FAQ from the source. Five to eight questions, in the words a person would actually ask, not the doc's own headings. Each answer is three sentences or fewer and stays inside the source. If two questions have the same answer, keep one. End with the heading "Not answered here" and list what people will still ask.
+
+Source:
+[paste the doc or the thread]`
+        },
+        {
+          title: "Cut in half",
+          body: `Cut the source to about half the words. Keep the order of the argument. Do not add a transition that changes the meaning. After the short version, list every fact, name, or number you removed, one per line. If you removed none of those, say so.
+
+Source:
+[paste it]`
+        }
+      ]
+    },
+    {
+      id: "data-extraction",
+      name: "Data extraction",
+      blurb: "Pull records into a shape you name. Missing fields stay empty. Conflicts stay conflicts.",
+      system: `You extract structured data from a source. Return only what the source states. Use null for a field the source does not give. Never guess an id, a date, a name, or an amount. Keep the original units, currency, and spelling.
+
+If two parts of the source disagree, return both values and set conflict to true. Do not merge them and do not pick a winner.
+
+Output only the format you are asked for. No preamble and no closing remark.`,
+      tasks: [
+        {
+          title: "Records into a schema",
+          body: `Extract one JSON object per record.
+
+Schema:
+[paste the field names and types]
+
+Rules:
+- null when the source is silent. Do not write an empty string, "unknown", or "N/A" unless the source literally says that.
+- Keep dates as written. Do not reformat them unless the schema says to.
+- If a line is not a record (a header, a total, a footnote), put it in "skipped" with the raw text and the reason.
+
+Source:
+[paste the table, email, or page text]`
+        },
+        {
+          title: "Dates, amounts, parties",
+          body: `Pull every date, amount, and named party from the source. Return a JSON array. Each item has kind (date, amount, or party), value as written, unit or currency if stated else null, and the sentence it came from.
+
+Do not convert currency. Do not turn "next Tuesday" into a calendar date. Do not treat a product name as a party.
+
+Source:
+[paste it]`
+        },
+        {
+          title: "From a ticket or email",
+          body: `Extract one JSON object with these fields:
+
+from
+asked_for
+deadline
+already_promised (array)
+attachments_named (array)
+ids (array)
+
+already_promised is only what someone in the thread committed to, quoted short. ids means order numbers, ticket numbers, and invoice numbers, as written. Use null or an empty array when the message does not say. Do not treat "ASAP" or "urgent" as a deadline.
+
+Message:
+[paste it]`
+        },
+        {
+          title: "Messy text to a table",
+          body: `Make a table with these columns:
+[column names]
+
+One row per item you can fill without guessing. If a line does not fit, do not force it into a cell. Put those lines under the heading "Left out", each with the raw line. Trim cell text. Do not add a total the source did not already compute.
+
+Text:
+[paste it]`
+        },
+        {
+          title: "Diff two extracts",
+          body: `Compare extract A (earlier) with extract B (later). They use the same schema. Return JSON with three arrays: changed, added, removed. Each changed item has field, from, and to. Each added or removed item has field and value.
+
+Match records on [the id field]. If an id is in only one extract, the whole record is added or removed. Do not treat a formatting difference as a change (12.00 versus 12, or a stray space). Do report a unit change.
+
+Extract A:
+[paste]
+
+Extract B:
+[paste]`
+        }
+      ]
+    }
+  ];
+
+  const topicsEl = document.getElementById("topics");
+  const blurbEl = document.getElementById("blurb");
+  const packEl = document.getElementById("pack");
+  const statusEl = document.getElementById("status");
+  const downloadBtn = document.getElementById("download");
+  let current = PACKS[0];
+
+  function byId(id) {
+    return PACKS.find((p) => p.id === id) || null;
+  }
+
+  function toMarkdown(pack) {
+    const lines = [
+      "# " + pack.name,
+      "",
+      pack.blurb,
+      "",
+      "Replace every [bracket] before you use a prompt.",
+      "",
+      "## System prompt",
+      "",
+      pack.system,
+      "",
+      "## Task prompts",
+      ""
+    ];
+    pack.tasks.forEach((task, i) => {
+      lines.push("### " + (i + 1) + ". " + task.title, "", task.body, "");
+    });
+    return lines.join("\n");
+  }
+
+  function flash(btn, label) {
+    btn.textContent = label;
+    clearTimeout(btn._timer);
+    btn._timer = setTimeout(() => {
+      btn.textContent = btn.dataset.label;
+    }, 1400);
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise((resolve, reject) => {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.left = "-9999px";
+      document.body.appendChild(area);
+      area.select();
+      try {
+        const ok = document.execCommand("copy");
+        document.body.removeChild(area);
+        if (ok) resolve();
+        else reject(new Error("copy failed"));
+      } catch (err) {
+        document.body.removeChild(area);
+        reject(err);
+      }
+    });
+  }
+
+  function makeSection(heading, title, text) {
+    const article = document.createElement("article");
+    const head = document.createElement("div");
+    head.className = "head";
+    const h = document.createElement(heading);
+    h.textContent = title;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "copy";
+    btn.dataset.label = "Copy";
+    btn.textContent = "Copy";
+    btn.setAttribute("aria-label", "Copy " + title);
+    const pre = document.createElement("pre");
+    pre.textContent = text;
+    btn.addEventListener("click", async () => {
+      try {
+        await copyText(text);
+        flash(btn, "Copied");
+        statusEl.textContent = "Copied " + title;
+      } catch (err) {
+        const range = document.createRange();
+        range.selectNodeContents(pre);
+        const sel = getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        flash(btn, "Select and copy");
+        statusEl.textContent = "Clipboard blocked. " + title + " is selected.";
+      }
+    });
+    head.append(h, btn);
+    article.append(head, pre);
+    return article;
+  }
+
+  function render(pack) {
+    current = pack;
+    document.title = pack.name + ": Prompt Pack Builder";
+    blurbEl.textContent = pack.blurb;
+    packEl.replaceChildren();
+    packEl.append(makeSection("h2", "System prompt", pack.system));
+    const tasksHead = document.createElement("h2");
+    tasksHead.textContent = "Task prompts";
+    packEl.append(tasksHead);
+    pack.tasks.forEach((task, i) => {
+      packEl.append(makeSection("h3", (i + 1) + ". " + task.title, task.body));
+    });
+    for (const btn of topicsEl.querySelectorAll("button")) {
+      const on = btn.dataset.id === pack.id;
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    downloadBtn.textContent = "Download markdown";
+    downloadBtn.setAttribute("aria-label", "Download " + pack.name + " pack as markdown");
+  }
+
+  function showFromHash() {
+    const id = location.hash.replace(/^#/, "");
+    const pack = byId(id) || PACKS[0];
+    render(pack);
+    const next = "#" + pack.id;
+    if (location.hash !== next) history.replaceState(null, "", next);
+  }
+
+  PACKS.forEach((pack) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.dataset.id = pack.id;
+    btn.textContent = pack.name;
+    btn.setAttribute("aria-pressed", "false");
+    btn.addEventListener("click", () => {
+      if (location.hash === "#" + pack.id) render(pack);
+      else location.hash = pack.id;
+    });
+    topicsEl.append(btn);
+  });
+
+  downloadBtn.addEventListener("click", () => {
+    const markdown = toMarkdown(current);
+    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "prompt-pack-" + current.id + ".md";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    statusEl.textContent = "Downloaded prompt-pack-" + current.id + ".md";
+  });
+
+  window.addEventListener("hashchange", showFromHash);
+  showFromHash();
+})();
+</script>
+</body>
+</html>

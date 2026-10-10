@@ -1,9 +1,32 @@
 # if-experiments
+
 Small interactive experiments for ignitionfoundry.com/experiments — one shipped per week by Cursor Cloud Agents.
 
 ## Experiments
 
 - [Skill Scorer](experiments/skill-scorer/index.html). Paste a SKILL.md or CLAUDE.md. Scores clarity, examples, and safety from 0 to 100, in the browser.
+An experiment is a folder under `experiments/<slug>/` with `brief.md`, `metrics.md`, and `results.json`. Copy `experiments/_template/` to start. The path from idea to archived result is `experiments/LIFECYCLE.md`.
+
+```sh
+python3 scripts/validate_experiment.py experiments/<slug>
+python3 scripts/validate_experiment.py --all
+Small interactive experiments for ignitionfoundry.com/experiments. One shipped per week by Cursor Cloud Agents.
+
+## Experiments
+
+- [Webhook payload builder](experiments/webhook-payload-builder/index.html). Edit a JSON body and copy a curl command. Nothing is sent.
+Small interactive experiments for ignitionfoundry.com/experiments — one shipped per week by Cursor Cloud Agents.
+
+## Experiments
+
+- [Results dashboard](results-dashboard/): metric cards and canvas charts from a `results.json` file. Schema in the folder README.
+- [Bot bio](experiments/bot-bio/) — three questions, one short bio that says the account is a bot. Static page. Nothing you type leaves the browser.
+
+Tests: `node --test experiments/bot-bio/bio.test.js`
+- [Prompt Pack Builder](experiments/prompt-pack/): pick a job, get a starter pack (one system prompt and five task prompts). Copy one, or download the pack as markdown. Static page, runs in the browser.
+## Products
+
+- [Job Card](products/job-card/): a one-page brief you fill in before you hand a job to an AI agent. Suggested price $15. Not for sale until a payment link is added.
 ## $5 Flip Challenge
 
 `flip/index.html` is the public pot tracker for ignitionfoundry.com/flip. The page fetches `flips.json` from the same directory as `pot.js`. Static files only. Serve the `flip` directory at `/flip/`.

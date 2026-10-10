@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Enforced by scripts/validate_experiment.py. Do not add keywords the script rejects.",
+  "title": "Experiment results",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "status", "started", "summary", "metrics"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(_template|[a-z0-9]+(-[a-z0-9]+)*)$",
+      "description": "Folder name. A lowercase slug, or _template for the starter."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["idea", "briefed", "running", "measured", "archived"],
+      "description": "Lifecycle stage. See experiments/LIFECYCLE.md."
+    },
+    "started": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "format": "date",
+      "description": "Day the folder was opened, YYYY-MM-DD."
+    },
+    "ended": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "format": "date",
+      "description": "Day the experiment was archived, YYYY-MM-DD. Required when status is archived. On or after started."
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the experiment is, then what happened, against the hypothesis."
+    },
+    "metrics": {
+      "type": "array",
+      "description": "Empty until status is measured or archived, then at least one entry.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "value"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "value": {
+            "type": ["number", "string"]
+          },
+          "unit": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["ship", "iterate", "drop"],
+      "description": "Required when status is archived. ship publishes, iterate opens a follow-up folder, drop stops the work."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": { "const": "archived" }
+        }
+      },
+      "then": {
+        "required": ["ended", "outcome"]
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": { "enum": ["measured", "archived"] }
+        }
+      },
+      "then": {
+        "properties": {
+          "metrics": { "minItems": 1 }
+        }
+      }
+    }
+  ]
+}
