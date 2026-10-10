@@ -5,6 +5,7 @@
   var MUTED = "#666666";
   var GRID = "#e6e6e6";
   var ZERO = "#bdbdbd";
+  var MathSIN45 = Math.sin(Math.PI / 4);
 
   var els = {
     title: document.getElementById("title"),
@@ -500,11 +501,25 @@
       labelWidth = Math.max(labelWidth, ctx.measureText(label).width);
     });
 
+    var count = chart.points.length;
+    var labels = chart.points.map(function (point) { return point.label; });
+    var widestLabel = 0;
+    labels.forEach(function (label) {
+      widestLabel = Math.max(widestLabel, ctx.measureText(label).width);
+    });
+    var plotLeft = Math.ceil(labelWidth) + 12;
+    var plotRight = width - 8;
+    var slot = count ? (plotRight - plotLeft) / count : 0;
+    var rotateLabels = widestLabel > slot - 6;
+    var bottomPad = rotateLabels
+      ? Math.min(84, Math.ceil(widestLabel * MathSIN45) + 18)
+      : 28;
+
     var plot = {
-      left: Math.ceil(labelWidth) + 12,
-      right: width - 8,
+      left: plotLeft,
+      right: plotRight,
       top: 14,
-      bottom: height - 28,
+      bottom: height - bottomPad,
     };
     if (plot.right - plot.left < 24 || plot.bottom - plot.top < 24) return;
 
@@ -539,20 +554,35 @@
       ctx.fillText(tickLabels[index], plot.left - 8, yOf(tick));
     });
 
-    var count = chart.points.length;
-    var slot = (plot.right - plot.left) / count;
-    var stride = labelStride(ctx, chart.points.map(function (point) { return point.label; }), slot);
-    ctx.textAlign = "center";
-    ctx.textBaseline = "top";
-    chart.points.forEach(function (point, index) {
-      if (index % stride !== 0) return;
-      var text = fitText(ctx, point.label, Math.max(12, slot * stride - 6));
-      var textWidth = ctx.measureText(text).width;
-      var x = plot.left + slot * index + slot / 2;
-      if (x - textWidth / 2 < 0) x = textWidth / 2;
-      if (x + textWidth / 2 > width) x = width - textWidth / 2;
-      ctx.fillText(text, x, plot.bottom + 8);
-    });
+    if (rotateLabels) {
+      var rotatedStride = slot < 14 ? Math.ceil(14 / slot) : 1;
+      var maxLabel = Math.max(24, (bottomPad - 16) / MathSIN45);
+      chart.points.forEach(function (point, index) {
+        if (index % rotatedStride !== 0) return;
+        var text = fitText(ctx, point.label, maxLabel);
+        var x = plot.left + slot * index + slot / 2;
+        ctx.save();
+        ctx.translate(x, plot.bottom + 8);
+        ctx.rotate(-Math.PI / 4);
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, 0, 0);
+        ctx.restore();
+      });
+    } else {
+      var stride = labelStride(ctx, labels, slot);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      chart.points.forEach(function (point, index) {
+        if (index % stride !== 0) return;
+        var text = fitText(ctx, point.label, Math.max(12, slot * stride - 6));
+        var textWidth = ctx.measureText(text).width;
+        var x = plot.left + slot * index + slot / 2;
+        if (x - textWidth / 2 < 0) x = textWidth / 2;
+        if (x + textWidth / 2 > width) x = width - textWidth / 2;
+        ctx.fillText(text, x, plot.bottom + 8);
+      });
+    }
 
     var coords = chart.points.map(function (point, index) {
       return {
