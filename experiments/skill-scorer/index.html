@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Scorer</title>
+<meta name="description" content="Paste a SKILL.md or CLAUDE.md. Get a score from 0 to 100 for clarity, examples, and safety. Runs in the browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%231a1a1a'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    max-width: 38rem;
+    margin: 4rem auto;
+    padding: 0 1rem;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+  }
+  h1 { font-size: 1.6rem; }
+  h3 { font-size: 1.05rem; margin: 1.25rem 0 0.2rem; }
+  a { color: #1a1a1a; }
+  li { margin-bottom: 0.75rem; }
+  label { display: block; margin-top: 1.25rem; }
+  textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 16rem;
+    margin-top: 0.35rem;
+    padding: 0.55rem 0.65rem;
+    font: 0.9rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color: #1a1a1a;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    resize: vertical;
+  }
+  button {
+    font: inherit;
+    margin-top: 0.75rem;
+    padding: 0.2rem 0.65rem;
+    color: #1a1a1a;
+    background: #fff;
+    border: 1px solid #1a1a1a;
+    cursor: pointer;
+  }
+  #result { margin-top: 1.75rem; }
+  .total { font-size: 2rem; line-height: 1.2; margin: 0.2rem 0 0.25rem; }
+  .of { font-size: 1rem; color: #666; }
+  .checks { color: #666; margin: 0.15rem 0; }
+  .fix { margin: 0.15rem 0 0; }
+  details { margin-top: 1rem; }
+  summary { cursor: pointer; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9em; }
+  footer { margin-top: 3rem; font-size: 0.85rem; color: #666; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Skill Scorer</h1>
+  <p>Paste a SKILL.md or CLAUDE.md. The score runs from 0 to 100 and stays in this browser.</p>
+
+  <label for="skill">Skill text</label>
+  <textarea id="skill" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="Paste the file here"></textarea>
+  <button type="button" id="sample">Load a sample</button>
+
+  <section id="result" hidden>
+    <h2>Score</h2>
+    <p class="total"><span id="total">0</span><span class="of"> / 100</span></p>
+    <div id="categories"></div>
+  </section>
+
+  <h2>How scoring works</h2>
+  <p>The total is the average of clarity, examples, and safety, rounded to the nearest whole number. The same text always gets the same score.</p>
+  <ul>
+    <li><strong>Clarity.</strong> A description of what the skill does and when to use it, at least three headings, an Examples section, and three numbered steps.</li>
+    <li><strong>Examples.</strong> Two or more fenced code blocks, written out in full, with a language tag on the fence.</li>
+    <li><strong>Safety.</strong> A warning about secrets, credentials, or API keys, near those words. No hardcoded keys. Every skill gets this check.</li>
+  </ul>
+  <details>
+    <summary>Point values</summary>
+    <ul>
+      <li><strong>Description, 40.</strong> 80 characters or more scores 40. 40 to 79 scores 25. 12 to 39 scores 10. Counted from the YAML description or the opening paragraph, whichever is longer.</li>
+      <li><strong>Sections, 30.</strong> Three <code>##</code> or <code>###</code> headings score 30. Two score 20. One scores 10. Headings inside code fences do not count.</li>
+      <li><strong>Concrete detail, 30.</strong> An Examples heading scores 15. Otherwise "for example", "e.g.", or "example:" scores 10. Three numbered steps score 15. One or two steps score 5.</li>
+      <li><strong>Code blocks, 50.</strong> Two fenced blocks score 50. One scores 30.</li>
+      <li><strong>Copy-pasteable, 50.</strong> Every block needs real text, not a placeholder such as <code>YOUR_KEY</code>, <code>changeme</code>, or a line of dots. At least one fence needs a language tag. Some complete blocks score 25. All complete, but none tagged, scores 40.</li>
+      <li><strong>Secrets warning, 50.</strong> The text has to name a secret, credential, API key, password, private key, access token, or <code>.env</code>, with never, do not, avoid, must not, should not, or warning within 400 characters. The noun alone scores 10. Both, farther apart, scores 25.</li>
+      <li><strong>No hardcoded keys, 50.</strong> A known key shape, or a long quoted assignment to a secret-like name, scores 0. Obvious fakes (example, placeholder, changeme, sample) are ignored. The page does not print the key back.</li>
+    </ul>
+    <p>The one-line note under each category is the gap worth the most points. Surrounding whitespace is ignored, and Windows and Unix line endings score the same.</p>
+  </details>
+  <noscript><p>Scoring needs JavaScript. It still runs only in this browser.</p></noscript>
+</main>
+<footer>
+  <p>Nothing is uploaded. There is no account and no tracking.</p>
+  <p><a href="https://ignitionfoundry.com/">Ignition Foundry</a></p>
+</footer>
+<script src="score.js"></script>
+<script>
+(function () {
+  var box = document.getElementById('skill');
+  var result = document.getElementById('result');
+  var total = document.getElementById('total');
+  var cats = document.getElementById('categories');
+
+  function show(scored) {
+    total.textContent = String(scored.total);
+    cats.replaceChildren();
+    scored.categories.forEach(function (item) {
+      var h = document.createElement('h3');
+      h.textContent = item.label + ' ' + item.score + ' / 100';
+      var checks = document.createElement('p');
+      checks.className = 'checks';
+      checks.textContent = item.checks.map(function (c) {
+        return c.label + ' ' + c.score + '/' + c.max;
+      }).join(', ');
+      var fix = document.createElement('p');
+      fix.className = 'fix';
+      fix.textContent = item.fix || 'No change needed.';
+      cats.appendChild(h);
+      cats.appendChild(checks);
+      cats.appendChild(fix);
+    });
+    result.hidden = false;
+  }
+
+  function update() {
+    if (!box.value.trim() || !window.SkillScorer) {
+      result.hidden = true;
+      total.textContent = '0';
+      cats.replaceChildren();
+      return;
+    }
+    show(window.SkillScorer.scoreSkill(box.value));
+  }
+
+  box.addEventListener('input', update);
+  document.getElementById('sample').addEventListener('click', function () {
+    if (!window.SkillScorer) return;
+    box.value = window.SkillScorer.SAMPLE_SKILL;
+    update();
+    box.focus();
+  });
+})();
+</script>
+</body>
+</html>
