@@ -1,6 +1,9 @@
 # if-experiments
 Small interactive experiments for ignitionfoundry.com/experiments — one shipped per week by Cursor Cloud Agents.
 
+## Products
+
+- [Job Card](products/job-card/): a one-page brief you fill in before you hand a job to an AI agent. Suggested price $15. Not for sale until a payment link is added.
 ## $5 Flip Challenge
 
 `flip/index.html` is the public pot tracker for ignitionfoundry.com/flip. The page fetches `flips.json` from the same directory as `pot.js`. Static files only. Serve the `flip` directory at `/flip/`.

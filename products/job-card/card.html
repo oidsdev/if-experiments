@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job Card</title>
+<meta name="description" content="Fill in one job before you hand it to an AI agent. The brief stays in your browser.">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#card-form">Skip to the form</a>
+<header class="top">
+  <a class="brand" href="index.html">Job Card</a>
+  <nav><a href="index.html">About</a></nav>
+</header>
+
+<main>
+  <noscript>
+    <div class="note"><strong>This page needs JavaScript.</strong> The brief is built in this page, so it cannot update with JavaScript off. You can still read the fields and write the brief by hand.</div>
+  </noscript>
+
+  <h1>This job, on one card.</h1>
+  <p class="lead">Fill in the blanks. The brief on this page updates as you type. Paste it at the start of the session.</p>
+  <p class="small muted">Nothing you type is sent anywhere. A draft is saved in this browser only.</p>
+
+  <form id="card-form" class="no-print" autocomplete="off">
+    <label class="field" for="job">Job</label>
+    <p class="hint">One sentence. What should be true when this is done.</p>
+    <input id="job" name="job" type="text" maxlength="160" placeholder="Add an empty state to the projects page">
+
+    <label class="field" for="done">Done when</label>
+    <p class="hint">The checks you will actually do. One per line.</p>
+    <textarea id="done" name="done" placeholder="An empty list shows a short message and a way to create a project&#10;A list that has projects still shows those projects"></textarea>
+
+    <label class="field" for="may">May touch</label>
+    <p class="hint">Files, folders, or systems that are in bounds. One per line.</p>
+    <textarea id="may" name="may" placeholder="The projects page and its styles"></textarea>
+
+    <label class="field" for="mustNot">Must not touch</label>
+    <p class="hint">Name them. If it is not listed, the closing line still says to stop and ask.</p>
+    <textarea id="mustNot" name="mustNot" placeholder="Auth, billing, and environment files"></textarea>
+
+    <fieldset>
+      <legend class="field">Ask me before</legend>
+      <p class="hint">Check the actions that need a yes from you first.</p>
+      <ul class="checks">
+        <li><label><input type="checkbox" name="ask" value="message" data-label="Send a message, email, or post"> Send a message, email, or post</label></li>
+        <li><label><input type="checkbox" name="ask" value="pr" data-label="Open or merge a pull request"> Open or merge a pull request</label></li>
+        <li><label><input type="checkbox" name="ask" value="install" data-label="Install or upgrade a package"> Install or upgrade a package</label></li>
+        <li><label><input type="checkbox" name="ask" value="delete" data-label="Delete or rename files"> Delete or rename files</label></li>
+        <li><label><input type="checkbox" name="ask" value="live" data-label="Change something a user can already see"> Change something a user can already see</label></li>
+        <li><label><input type="checkbox" name="ask" value="spend" data-label="Spend money or start a subscription"> Spend money or start a subscription</label></li>
+      </ul>
+    </fieldset>
+
+    <label class="field" for="stop">Stop if</label>
+    <p class="hint">When the agent should quit this job and come back to you. One per line.</p>
+    <textarea id="stop" name="stop" placeholder="A test fails for a reason outside this job"></textarea>
+    <div class="chips" aria-label="Add a stop line">
+      <button class="chip" type="button" data-stop="The work is ambiguous">The work is ambiguous</button>
+      <button class="chip" type="button" data-stop="A test fails for a reason outside this job">A test fails outside this job</button>
+      <button class="chip" type="button" data-stop="You would need a file outside the bounds">A file outside the bounds</button>
+      <button class="chip" type="button" data-stop="The same error has come back twice">The same error twice</button>
+    </div>
+
+    <label class="field" for="leave">Leave behind</label>
+    <p class="hint">What the next session needs from this one. One per line.</p>
+    <textarea id="leave" name="leave" placeholder="Files you changed&#10;What you checked&#10;Anything you skipped"></textarea>
+
+    <div class="stack" style="margin-top:1.5rem">
+      <button class="btn secondary" type="button" id="example-btn">Fill with an example</button>
+      <button class="btn secondary" type="button" id="clear-btn">Clear this card</button>
+    </div>
+  </form>
+
+  <h2>Brief</h2>
+  <p class="hint no-print">Empty sections are left out. Copy this into the agent.</p>
+  <pre class="card" id="card-preview" tabindex="0"></pre>
+
+  <div class="row no-print">
+    <button class="btn" type="button" id="copy-btn">Copy</button>
+    <button class="btn secondary" type="button" id="download-btn">Download</button>
+  </div>
+  <div class="row no-print">
+    <button class="btn secondary" type="button" id="print-btn">Print</button>
+  </div>
+  <p class="status no-print" id="status" role="status" aria-live="polite"></p>
+
+  <div class="note no-print">
+    <strong>A clearer first message, not a lock.</strong>
+    The agent can still ignore a line. Read the diff. If a step is missing from the card, that is your signal to stop it.
+  </div>
+</main>
+
+<footer class="bottom no-print">
+  <p>From <a href="https://ignitionfoundry.com">Orbital Desk</a>. For people who run AI agents. Sibling of <a href="https://agent-house-rules.pages.dev">House Rules</a> and <a href="https://pack-check.pages.dev">Pack Check</a>.</p>
+  <p>House Rules is the standing list. This card is for one job. No account, no tracking, no network calls.</p>
+</footer>
+<script src="card.js"></script>
+</body>
+</html>
