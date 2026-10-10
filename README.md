@@ -3,7 +3,7 @@ Small interactive experiments for ignitionfoundry.com/experiments — one shippe
 
 ## $5 Flip Challenge
 
-`flip/index.html` is the public pot tracker for ignitionfoundry.com/flip. The page fetches `flip/flips.json` from the same directory (resolved next to `pot.js`, so a missing trailing slash still hits the right file). Static files only.
+`flip/index.html` is the public pot tracker for ignitionfoundry.com/flip. The page fetches `flips.json` from the same directory as `pot.js`. Static files only. Serve the `flip` directory at `/flip/`.
 
 An updater rewrites `flip/flips.json` in place. Leave `index.html` and `pot.js` alone.
 

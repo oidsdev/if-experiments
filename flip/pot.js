@@ -7,6 +7,7 @@
   var pnlEl = document.getElementById("pnl");
   var noteEl = document.getElementById("note");
   var historyEl = document.getElementById("history");
+  var flipsHeading = document.getElementById("flips-heading");
 
   var money = new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -61,6 +62,7 @@
     pnlEl.textContent = "";
     noteEl.hidden = true;
     historyEl.textContent = "";
+    if (flipsHeading) flipsHeading.hidden = true;
     if (app) app.setAttribute("aria-busy", "false");
   }
 
@@ -93,6 +95,7 @@
     }
 
     historyEl.textContent = "";
+    if (flipsHeading) flipsHeading.hidden = false;
     if (flips.length === 0) {
       historyEl.appendChild(cell("p", "empty", "No flips yet."));
       if (app) app.setAttribute("aria-busy", "false");
