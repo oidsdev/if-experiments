@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bot bio</title>
+<meta name="description" content="Three questions, one short bio that says your account is a bot. Runs in the browser. Nothing you type is sent anywhere.">
+<meta name="color-scheme" content="light">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%231a1a1a'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#app">Skip to the questions</a>
+<main id="app" tabindex="-1">
+  <p class="kicker"><a href="https://ignitionfoundry.com/">Ignition Foundry</a></p>
+  <h1>Bot bio</h1>
+  <p>Name the bot, say what it does, and name who runs it. You get a short bio to paste on the account. The first line is always: I am an automated bot.</p>
+  <p class="quiet">Runs in this page. Nothing you type is sent anywhere.</p>
+
+  <noscript>
+    <p>This page needs JavaScript to build the bio. Nothing is uploaded.</p>
+  </noscript>
+
+  <form id="flow" novalidate>
+    <fieldset data-step="0">
+      <legend>Question 1 of 3</legend>
+      <label for="name">What is the bot's name?</label>
+      <p class="hint" id="hint-name">The name on the account.</p>
+      <input id="name" name="name" required maxlength="80" autocomplete="off" enterkeyhint="next" aria-describedby="hint-name" placeholder="Clerk">
+      <div class="row">
+        <button type="submit">Next</button>
+      </div>
+    </fieldset>
+
+    <fieldset data-step="1" hidden>
+      <legend>Question 2 of 3</legend>
+      <label for="does">What does it do?</label>
+      <p class="hint" id="hint-does">One sentence, as the bot would say it.</p>
+      <input id="does" name="does" required maxlength="280" autocomplete="off" enterkeyhint="next" aria-describedby="hint-does" placeholder="I answer questions about store hours.">
+      <div class="row">
+        <button class="back" type="button" data-back>Back</button>
+        <button type="submit">Next</button>
+      </div>
+    </fieldset>
+
+    <fieldset data-step="2" hidden>
+      <legend>Question 3 of 3</legend>
+      <label for="operator">Who runs it?</label>
+      <p class="hint" id="hint-operator">A person or a company.</p>
+      <input id="operator" name="operator" required maxlength="120" autocomplete="off" enterkeyhint="done" aria-describedby="hint-operator" placeholder="Northwind Supply">
+      <div class="row">
+        <button class="back" type="button" data-back>Back</button>
+        <button type="submit">Make the bio</button>
+      </div>
+    </fieldset>
+
+    <p id="error" class="error" role="alert"></p>
+  </form>
+
+  <section id="result" hidden>
+    <h2 id="result-title" tabindex="-1">Your bio</h2>
+    <p>Paste this on the account.</p>
+    <pre class="bio" id="bio" aria-label="Your bio"></pre>
+    <div class="row">
+      <button type="button" id="copy">Copy bio</button>
+    </div>
+    <p class="copied" id="copy-status" role="status"></p>
+
+    <h2>Why each line is there</h2>
+    <ol id="why"></ol>
+    <button class="back" type="button" id="again">Start over</button>
+  </section>
+
+  <section class="law" aria-labelledby="law-title">
+    <h2 id="law-title">CA B&amp;P 17941</h2>
+    <p>California Business and Professions Code section 17941 is about bots that hide what they are. It applies when a person uses a bot online to mislead someone in California, on purpose, to push a sale or influence a vote. The section says a person is not liable under it if they disclose that it is a bot. The disclosure has to be clear, conspicuous, and reasonably designed to inform the person.</p>
+    <p>Not a lawyer. This is not legal advice. <a href="https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=BPC&amp;sectionNum=17941">Read CA B&amp;P 17941</a>.</p>
+  </section>
+</main>
+<footer>
+  <p>An experiment from <a href="https://ignitionfoundry.com/">Ignition Foundry</a>.</p>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

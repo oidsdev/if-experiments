@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Webhook payload builder</title>
+<meta name="description" content="Edit a webhook JSON body and copy a curl command. Nothing is sent from the page.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%231a1a1a'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23fff'/%3E%3C/svg%3E">
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, sans-serif;
+    max-width: 40rem;
+    margin: 4rem auto;
+    padding: 0 1rem;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+  }
+  h1 { font-size: 1.6rem; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 0.5rem; }
+  h2 { font-size: 1.05rem; margin: 1.75rem 0 0.4rem; }
+  p { margin: 0.4rem 0; }
+  a { color: #1a1a1a; }
+  label { display: block; font-weight: 600; margin: 1.25rem 0 0.35rem; }
+  .hint, footer { color: #555; font-size: 0.85rem; }
+  footer { margin-top: 3rem; }
+  select, input {
+    font: inherit;
+    color: inherit;
+    background: #fff;
+    border: 1px solid #1a1a1a;
+    width: 100%;
+    padding: 0.45rem 0.55rem;
+  }
+  :focus-visible { outline: 2px solid #1a1a1a; outline-offset: 2px; }
+  .editor {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    border: 1px solid #1a1a1a;
+    background: #fff;
+    min-height: 0;
+  }
+  .editor.invalid { border-color: #6e1212; }
+  .gutter, textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    margin: 0;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  .gutter {
+    min-height: 0;
+    overflow: hidden;
+    text-align: right;
+    color: #555;
+    background: #f6f6f6;
+    border-right: 1px solid #ddd;
+    padding-left: 0.35rem;
+    padding-right: 0.45rem;
+    user-select: none;
+  }
+  .gutter span { display: block; }
+  .gutter span.bad { background: #f3d6d6; color: #6e1212; font-weight: 700; }
+  textarea {
+    display: block;
+    width: 100%;
+    height: 18rem;
+    min-height: 12rem;
+    border: 0;
+    resize: vertical;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    background: #fff;
+    color: #1a1a1a;
+    white-space: pre;
+    overflow: auto;
+  }
+  #json-status { min-height: 1.4em; margin-top: 0.45rem; font-size: 0.9rem; }
+  #json-status.ok { color: #1a1a1a; }
+  #json-status.bad { color: #6e1212; }
+  #json-status code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85em;
+  }
+  pre {
+    margin: 0;
+    background: #f6f6f6;
+    border: 1px solid #1a1a1a;
+    padding: 0.75rem;
+    overflow: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    white-space: pre;
+  }
+  .actions { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.6rem; }
+  button {
+    font: inherit;
+    font-weight: 600;
+    color: #fff;
+    background: #1a1a1a;
+    border: 1px solid #1a1a1a;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  #copy-status { font-size: 0.9rem; }
+  noscript { display: block; margin: 1rem 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Webhook payload builder</h1>
+  <p>Pick an event, edit the JSON, and copy a curl command. This page does not send it.</p>
+  <noscript>This page needs JavaScript to validate JSON and build the command. It still does not send anything.</noscript>
+
+  <label for="event">Event</label>
+  <select id="event"></select>
+
+  <label for="endpoint">Endpoint</label>
+  <input id="endpoint" type="url" inputmode="url" spellcheck="false" autocomplete="off" value="https://example.com/webhooks">
+  <p class="hint">Change this to the URL you want the command to call.</p>
+
+  <label for="payload">Payload</label>
+  <div class="editor" id="editor">
+    <div class="gutter" id="gutter" aria-hidden="true"></div>
+    <textarea id="payload" wrap="off" spellcheck="false" autocomplete="off" autocapitalize="off" rows="16" aria-describedby="json-status"></textarea>
+  </div>
+  <p id="json-status" role="status"></p>
+
+  <h2>Command</h2>
+  <pre id="curl" aria-label="curl command"></pre>
+  <div class="actions">
+    <button type="button" id="copy">Copy command</button>
+    <span id="copy-status" role="status"></span>
+  </div>
+  <p class="hint">Content-Type is set. Signing headers are not. Add those yourself if you need them.</p>
+</main>
+<footer>
+  <p>Orbital Desk LLC · <a href="https://ignitionfoundry.com/">Ignition Foundry</a></p>
+</footer>
+<script src="builder.js"></script>
+<script src="page.js"></script>
+</body>
+</html>
