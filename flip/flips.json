@@ -1,0 +1,28 @@
+{
+  "sample": true,
+  "current_value": 28.5,
+  "seed": 5,
+  "flips": [
+    {
+      "item": "Brass lamp",
+      "buy_price": 5,
+      "sold_price": 12,
+      "profit": 7,
+      "date": "2026-10-02"
+    },
+    {
+      "item": "Wool blanket",
+      "buy_price": 12,
+      "sold_price": 20,
+      "profit": 8,
+      "date": "2026-10-07"
+    },
+    {
+      "item": "Cast-iron pan",
+      "buy_price": 20,
+      "sold_price": 28.5,
+      "profit": 8.5,
+      "date": "2026-10-09"
+    }
+  ]
+}
