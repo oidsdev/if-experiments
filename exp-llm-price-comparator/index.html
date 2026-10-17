@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM price comparator</title>
+<meta name="description" content="Published input and output prices, and the list-price cost of 1,000 agent runs. Static page. Prices are not fetched live.">
+<meta name="color-scheme" content="light">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%231a1a1a'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#calculator">Skip to the calculator</a>
+<main>
+  <p class="kicker"><a href="https://ignitionfoundry.com/">Ignition Foundry</a></p>
+  <h1>LLM price comparator</h1>
+  <p>Published input and output prices, and what 1,000 agent runs would cost at those rates.</p>
+  <p class="stamp" id="stamp">Prices current as of October 2026.</p>
+  <p class="quiet">Prices change. This table is refreshed monthly. Each number is copied from the provider page in that row. This page does not fetch live prices.</p>
+
+  <h2>Price per 1M tokens</h2>
+  <div class="table-wrap">
+    <table>
+      <caption>Standard list prices. Not batch, cached, or fast mode. If a row names a context tier, that is the rate in the calculator.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Model</th>
+          <th class="num" scope="col">Input</th>
+          <th class="num" scope="col">Output</th>
+          <th scope="col">Rate used</th>
+          <th scope="col">Source</th>
+        </tr>
+      </thead>
+      <tbody id="price-rows"></tbody>
+    </table>
+  </div>
+
+  <h2 id="calculator">Cost of 1,000 agent runs</h2>
+  <p>Enter the average tokens for one run. The result is the list-price cost of 1,000 runs at that size.</p>
+
+  <noscript>
+    <p>This page needs JavaScript to fill the table and run the calculator. Nothing is uploaded.</p>
+  </noscript>
+
+  <form id="calc" novalidate>
+    <label for="input-tokens">Average input tokens per run
+      <span class="hint" id="hint-in">A whole number. Count the prompt, not a whole day.</span>
+    </label>
+    <input id="input-tokens" name="input-tokens" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-describedby="hint-in">
+
+    <label for="output-tokens">Average output tokens per run
+      <span class="hint" id="hint-out">A whole number. For Gemini, thinking tokens are billed as output.</span>
+    </label>
+    <input id="output-tokens" name="output-tokens" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-describedby="hint-out">
+
+    <fieldset>
+      <legend>Models to compare</legend>
+      <div class="picks" id="model-picks"></div>
+    </fieldset>
+    <p id="form-error" class="error" role="alert"></p>
+  </form>
+
+  <div id="results" aria-live="polite"></div>
+  <p class="quiet">Cost = 1,000 × (input tokens × input price + output tokens × output price) ÷ 1,000,000. Cached tokens, batch, and regional premiums are left out.</p>
+</main>
+<footer>
+  <p>An experiment from <a href="https://ignitionfoundry.com/">Ignition Foundry</a>.</p>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

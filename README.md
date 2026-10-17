@@ -8,6 +8,10 @@ Small interactive experiments for ignitionfoundry.com/experiments — one shippe
 
 Tests: `node --test experiments/ai-crawler-readiness/check.test.js`
 - [Skill Scorer](experiments/skill-scorer/index.html). Paste a SKILL.md or CLAUDE.md. Scores clarity, examples, and safety from 0 to 100, in the browser.
+- [LLM price comparator](exp-llm-price-comparator/index.html). Published input and output prices, and the cost of 1,000 agent runs. Static page. No live prices.
+
+Tests: `node --test exp-llm-price-comparator/cost.test.js`
+
 An experiment is a folder under `experiments/<slug>/` with `brief.md`, `metrics.md`, and `results.json`. Copy `experiments/_template/` to start. The path from idea to archived result is `experiments/LIFECYCLE.md`.
 
 ```sh
